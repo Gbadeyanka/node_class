@@ -29,14 +29,13 @@ mongodb.addlog = function(collecions,callback){
 
 
 mongodb.updatelog = function(phonenumber,updated_data,callback){
- // console.log(updated_data);
   db.request_log.findAndModify({
-      query: {phone : phonenumber },
+      query: {phonenumber : phonenumber },
       update: { $set: updated_data  },
       new: true
   }, function (err, doc, lastErrorObject) {
-    
-      if(!err){
+        
+      if(doc){
            callback(true,doc);
       }
       else{
@@ -53,7 +52,6 @@ mongodb.deletelog = function(myquery,callback){
   db.request_log.remove(myquery, function(err, obj) {
     if (err) throw callback(err);
     console.log("1 document deleted"); 
-    callback(false)
   });
 
  

@@ -100,7 +100,7 @@ handlers._users.post = function(data,callback){
 // @TODO Only let an authenticated user access their object. Dont let them access anyone elses.
 handlers._users.get = function(data,callback){
   // Check that phone number is valid
-  var phone = typeof(data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
+  var phone = typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 ? data.payload.phone.trim() : false;
   console.log(data.payload.phone);
   var queryString  = {"phone":phone};
   if(phone){
@@ -132,7 +132,7 @@ handlers._users.put = function(data,callback){
   var firstName = typeof(data.payload.firstName) == 'string' && data.payload.firstName.trim().length > 0 ? data.payload.firstName.trim() : false;
   var lastName = typeof(data.payload.lastName) == 'string' && data.payload.lastName.trim().length > 0 ? data.payload.lastName.trim() : false;
   var password = typeof(data.payload.password) == 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false;
-  var userData = {};
+
   // Error if phone is invalid
   if(phone){
     // Error if nothing is sent to update
@@ -142,9 +142,8 @@ handlers._users.put = function(data,callback){
   //    mongojs.updatelog(phone,userData,function(err,userData){
     var queryString  = {"phone":phone};
     // Make sure the user doesnt already exist
-    mongojs.getsingle(queryString,function(err,res){ 
-     console.log(res);
-        if(!err && res){
+    mongojs.getsingle(queryString,function(err,userData){ 
+        if(!err && userData){
           // Update the fields if necessary
           if(firstName){
             userData.firstName = firstName;
@@ -156,9 +155,8 @@ handlers._users.put = function(data,callback){
             userData.hashedPassword = helpers.hash(password);
           }
           // Store the new updates
-      mongojs.updatelog(phone,userData,function(err,response){
-        //console.log(err);
-            if(response){
+      mongojs.updatelog(phone,updated_data,function(err){
+            if(!err){
               callback(200);
             } else {
               console.log(err);
