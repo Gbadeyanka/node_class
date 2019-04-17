@@ -16,9 +16,14 @@ var server = http.createServer(function(req,res){
   // Get the path
   var path = parsedUrl.pathname;
   var trimmedPath = path.replace(/^\/+|\/+$/g, '');
+  res.end('Hello World!\n');
+ if(trimmedPath=='register'){
+  res.end('Display Registeration form!\n');
 
+ }else{
   // Send the response
   res.end('Hello World!\n');
+ }
 
   // Log the request/response
   console.log('Request received on path: '+trimmedPath);

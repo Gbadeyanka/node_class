@@ -8,6 +8,7 @@ var http = require('http');
 
  // Configure the server to respond to all requests with a string
 var server = http.createServer(function(req,res){
+  console.log(req);
   res.end('Hello World!\n');
 });
 
