@@ -1,0 +1,39 @@
+<script>
+let father = {
+     surname : "Ozah",
+     completion:"Brown",
+     eyecolor:"black",
+     honesty:true,
+     run:false,
+     mentorship:function(){
+         console.log("Can mentor");
+     },
+     shouldrun:function(){
+         this.run = true;
+     }
+}
+
+console.log(father.run);
+console.log(father.shouldrun());
+console.log(father.run);
+
+
+
+
+
+/*
+let victor = {
+    age:19,
+    surname:"Vizah"
+}
+
+let victor_child = {
+    age:6
+}
+victor.__proto__ = father;
+victor.honesty = false;
+victor_child.__proto__ = victor;
+victor_child.shouldrun();
+console.log(victor_child.run);
+*/
+</script>

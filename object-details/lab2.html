@@ -1,0 +1,24 @@
+<script>
+let father = {
+    surname : "Ozah",
+    completion:"Brown",
+    eyecolor:"black",
+    honesty:true,
+    run:false
+}
+
+function Victor(age){
+    this.age = age;
+}
+
+
+Victor.prototype = father;
+console.log(Victor(12));
+
+let victor = new Victor(12);
+
+console.log(victor);
+
+
+
+</script>

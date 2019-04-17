@@ -6,6 +6,7 @@
 // Dependencies
 var _data = require('./data');
 var helpers = require('./helpers');
+var mongojs = require('./mongodb');
 
 // Define all the handlers
 var handlers = {};
@@ -45,9 +46,12 @@ handlers._users.post = function(data,callback){
   var tosAgreement = typeof(data.payload.tosAgreement) == 'boolean' && data.payload.tosAgreement == true ? true : false;
    
   if(firstName && lastName && phone && password && tosAgreement){
+    var queryString  = {"phone":phone};
     // Make sure the user doesnt already exist
-    _data.read('users',phone,function(err,data){
-      if(err){
+    mongojs.getsingle(queryString,function(err,result){  
+      console.log(result);
+    //   _data.read('users',phone,function(err,data){
+      if(result.length==0){
         // Hash the password
         var hashedPassword = helpers.hash(password);
 
@@ -61,6 +65,11 @@ handlers._users.post = function(data,callback){
             'tosAgreement' : true
           };
 
+          //var record = {"phonenumber":"777777777","name":"Yinka Abass","Age":42,"Gender":"Male"}
+          mongojs.addlog(userObject,function(){
+            callback(200);
+          });
+          /*
           // Store the user
           _data.create('users',phone,userObject,function(err){
             if(!err){
@@ -69,7 +78,7 @@ handlers._users.post = function(data,callback){
               console.log(err);
               callback(500,{'Error' : 'Could not create the new user'});
             }
-          });
+          });*/
         } else {
           callback(500,{'Error' : 'Could not hash the user\'s password.'});
         }
@@ -91,10 +100,14 @@ handlers._users.post = function(data,callback){
 // @TODO Only let an authenticated user access their object. Dont let them access anyone elses.
 handlers._users.get = function(data,callback){
   // Check that phone number is valid
-  var phone = typeof(data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
+  var phone = typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 ? data.payload.phone.trim() : false;
+  console.log(data.payload.phone);
+  var queryString  = {"phone":phone};
   if(phone){
     // Lookup the user
-    _data.read('users',phone,function(err,data){
+    mongojs.getsingle(queryString,function(err,data){ 
+      console.log("++++++++++++");
+      console.log(data);
       if(!err && data){
         // Remove the hashed password from the user user object before returning it to the requester
         delete data.hashedPassword;
@@ -125,7 +138,11 @@ handlers._users.put = function(data,callback){
     // Error if nothing is sent to update
     if(firstName || lastName || password){
       // Lookup the user
-      _data.read('users',phone,function(err,userData){
+     // mongojs.updatelog(phone,userData,function(){})
+  //    mongojs.updatelog(phone,userData,function(err,userData){
+    var queryString  = {"phone":phone};
+    // Make sure the user doesnt already exist
+    mongojs.getsingle(queryString,function(err,userData){ 
         if(!err && userData){
           // Update the fields if necessary
           if(firstName){
@@ -138,7 +155,7 @@ handlers._users.put = function(data,callback){
             userData.hashedPassword = helpers.hash(password);
           }
           // Store the new updates
-          _data.update('users',phone,userData,function(err){
+      mongojs.updatelog(phone,updated_data,function(err){
             if(!err){
               callback(200);
             } else {
@@ -167,9 +184,11 @@ handlers._users.delete = function(data,callback){
   var phone = typeof(data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
   if(phone){
     // Lookup the user
-    _data.read('users',phone,function(err,data){
+    var queryString  = {"phone":phone};
+    // Make sure the user doesnt already exist
+    mongojs.getsingle(queryString,function(err,data){
       if(!err && data){
-        _data.delete('users',phone,function(err){
+        mongojs.deletelog(queryString,function(err){
           if(!err){
             callback(200);
           } else {

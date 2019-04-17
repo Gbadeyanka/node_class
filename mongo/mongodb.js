@@ -19,10 +19,11 @@ mongodb.testdb = function(){
 
 
 mongodb.addlog = function(collecions,callback){ 
-      console.log(collecions);
+      
       db.request_log.save(collecions, function(err, saved) {
-      if( err || !saved ) callback(true,saved);
-      else callback(false,saved);
+        console.log(saved);
+      if( err || !saved ) callback(false,saved);
+      else callback(true,saved);
     });
 }
 
@@ -51,10 +52,25 @@ mongodb.deletelog = function(myquery,callback){
   db.request_log.remove(myquery, function(err, obj) {
     if (err) throw callback(err);
     console.log("1 document deleted"); 
+  }); 
+}
+
+mongodb.getsingle = function(myquery,callback){ 
+  db.request_log.find(myquery, function(err, users) {    
+     callback(err, users);
   });
 
  
+    
+  
 }
+
+
+
+
+
+
+
 
 
 
